@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+// a lineup is made up of 5 players from a team, with one player at each position
 public class Lineup {
 
   Player pg;
@@ -44,6 +45,7 @@ public class Lineup {
     }
   }
   
+  // returns the player playing at the given position
   Player getPlayer(String position) {
     if (position.equals("pg")) {
       return this.pg;
@@ -62,16 +64,19 @@ public class Lineup {
     }
   }
 
+  // returns whether this lineup includes the given player
   boolean hasPlayer(Player player) {
     return player.samePlayer(this.pg) || player.samePlayer(this.sg) || player.samePlayer(this.sf) ||
         player.samePlayer(this.pf) || player.samePlayer(this.c);
   }
 
+  // returns whether this lineup is the same as the givven lineup
   boolean sameLineup(Lineup otherLineup) {
     return this.pg.samePlayer(otherLineup.pg) && this.sg.samePlayer(otherLineup.sg) && this.sf.samePlayer(otherLineup.sf) &&
         this.pf.samePlayer(otherLineup.pf) && this.c.samePlayer(otherLineup.c);
   }
 
+  // switches out the player currently at the given position for the given player
   void substitute(Player player, String position) {
     if (position.equals("pg")) {
       this.pg = player;
@@ -95,6 +100,7 @@ public class Lineup {
     }
   }
 
+  // prints out this lineup, with each position and the player playing at that position listed
   String lineupAsString() {
     return "PG - " + this.pg.firstName + " " + this.pg.lastName + 
         ", SG - " + this.sg.firstName + " " + this.sg.lastName + 

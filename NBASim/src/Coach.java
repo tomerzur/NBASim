@@ -1,4 +1,4 @@
-
+// a coach, with integer ratings (ranging from 25 to 99) in various categories and a team
 public class Coach {
 
   int playcalling;

@@ -1,4 +1,4 @@
-
+// a player has all sorts of data, such as attributes, biometrics, and position stored about them
 public class Player {
 
   String firstName;
@@ -14,6 +14,7 @@ public class Player {
   String primaryPosition; // PG, SG, SF, PF, or C
   String secondaryPosition; // PG, SG, SF, PF, C, or None
   
+  // these ratings range from 25 (worst possible) to 99 (best possible)
   int threePtOpen;
   int threePtContested;
   int midrangeOpen;
@@ -58,6 +59,7 @@ public class Player {
     this.fatigueLevel = 0;
   }
   
+  // creates a player without assigning them a team
   Player(String firstName, String lastName, String pos1, String pos2) {
     this.firstName = firstName;
     this.lastName = lastName;
@@ -66,10 +68,12 @@ public class Player {
     this.fatigueLevel = 0;
   }
   
+  // used as a placeholder for a player value that represents null
   Player() {
     this.firstName = "null player";
   }
 
+  // returns whether a given player is the same player as this player
   boolean samePlayer(Player otherPlayer) {
     return this.firstName.equals(otherPlayer.firstName) && this.lastName.equals(otherPlayer.lastName) 
         && this.height == otherPlayer.height && this.weight == otherPlayer.weight;

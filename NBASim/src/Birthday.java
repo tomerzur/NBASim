@@ -1,4 +1,4 @@
-
+// stores a birthdate given the birth month, birth day, and birth year
 public class Birthday {
 
   int month;

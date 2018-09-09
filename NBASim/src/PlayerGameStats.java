@@ -1,4 +1,4 @@
-
+// keeps track of all of a player's stats in a game
 public class PlayerGameStats {
 
   double min;
@@ -35,6 +35,7 @@ public class PlayerGameStats {
     this.pts = 0;
   }
 
+  // updates a player's stats by increasing the given stat by the given amount
   public void addStat(String statName, double amount) {
     if (statName.equals("min")) {
       this.min = this.min + amount;
@@ -86,6 +87,7 @@ public class PlayerGameStats {
     }
   }
 
+  // prints out all of a player's stats
   void printStats() {
     System.out.format("%1$-5.1f", this.min);
     System.out.format("%1$-5s", this.fg);

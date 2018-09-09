@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Random;
 
+// controls the playing out of a game. Adds on to the game stats throughout the simulation
 public class Game {
 
   GameStats stats;
@@ -11,6 +12,7 @@ public class Game {
     this.stats = new GameStats(homeTeam, awayTeam);
   }
   
+  // simulates a full game between the homeTeam and the awayTeam
   void playGame() {
     this.jumpBall();
     this.simQuarter(1);
@@ -23,6 +25,7 @@ public class Game {
     }
   }
 
+  // simulates the jump ball that occurs at the beginning of a game
   void jumpBall() {
     Player player1 = this.stats.homeTeam.startingLineup.c;
     Player player2 = this.stats.awayTeam.startingLineup.c;
@@ -50,6 +53,9 @@ public class Game {
         " won the jump ball.");
   }
 
+  // simulates a quarter of basketball
+  // if the quarter number is greater than 4, then it represents an overtime, with 5 representing the 1st overtime, 6 representing the 2nd overtime, etc.
+  // the quarterNumber given must be >= 1
   void simQuarter(int quarterNumber) {
     this.stats.quarterNumber = quarterNumber;
     if (quarterNumber <= 4) {

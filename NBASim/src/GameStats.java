@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+// keeps track of all of the current stats in a game
 public class GameStats {
 
   Lineup currentOffensiveFive;
@@ -23,8 +24,10 @@ public class GameStats {
   
   ArrayList<String> playByPlay = new ArrayList<>();
   
+  // maps each player with their individual stats for the game
   HashMap<Player, PlayerGameStats> playersStats = new HashMap<>();
   
+  // initialized at the beginning of a game
   GameStats(Team homeTeam, Team awayTeam) {
     this.homeTeam = homeTeam;
     this.awayTeam = awayTeam;
@@ -44,22 +47,26 @@ public class GameStats {
     this.secondsLeftInQuarter = 720;
   }
   
+  // adds a given amount of a given statistic to a player's statistics
   void addStat(Player player, String statName, double amount) {
     PlayerGameStats givenPlayerStats = this.playersStats.get(player);
     givenPlayerStats.addStat(statName, amount);
   }
 
+  // adds a string (representing what happened in a possession) to the play-by-play
   void addToPlayByPlay(String play) {
     this.playByPlay.add(this.homeTeam.name + " " + this.homeTeamScore + " - " + this.awayTeamScore + " "
   + this.awayTeam.name + "   " + play);
   }
   
+  // prints out the play-by-play
   void printPlayByPlay() {
     for (String s: this.playByPlay) {
       System.out.println(s);
     }
   }
   
+  // prints out the box score of all of the individual statistics accrued in a game
   void printGameStats() {
     System.out.println("Box Score:");
     System.out.println(this.homeTeam.location + " " + this.homeTeam.name);

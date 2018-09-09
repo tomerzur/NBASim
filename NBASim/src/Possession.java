@@ -1,9 +1,11 @@
 import java.util.ArrayList;
 import java.util.Random;
 
+// Each possession is made up of events, with each event representing different things that happen in this possession
+// A possession does not store any data, but it updates the given GameStats with all of the new statistics it records
 public class Possession {
-
-  int timeOfEvent; // in seconds
+  // all times are measured in seconds
+  int timeOfEvent;
   GameStats statsSoFar;
   Lineup offensiveFive;
   Lineup defensiveFive;
@@ -13,7 +15,9 @@ public class Possession {
   String minTimeInQuarter;
   boolean homeTeamOnOffense;
   
-  // These values are on a scale from 1 to 1000. 1 being this event almost never happens and 1000 being this event happens very often.
+  // These values represent how likely an event is to happen relative to all of the other events.
+  // The probability of an event e occurring in this possessino equals: e / totalValue (with totalValue being the sum of the values of all of the events occurring)
+  // A value of 1 means this event almost never happens and 1000 being this event happens more often.
   // Ex: pgPostup will usually be near 1, shootingFoul is usually close to 1000
   double pgShoots3ptValue;
   double pgShootsMidrangeValue;
@@ -42,12 +46,12 @@ public class Possession {
   double offensiveFoulValue;
   double jumpBallValue;
   double stealValue;
-  // There are 27 total values
   ArrayList<Double> values = new ArrayList<>();
   double totalValue;
   boolean endOfPossession;
   Random r = new Random();
   
+  // initializes this possession and simulates what happens in this possession
   Possession(GameStats statsSoFar) {
     this.statsSoFar = statsSoFar;
     this.offensiveFive = this.statsSoFar.currentOffensiveFive;
@@ -78,6 +82,8 @@ public class Possession {
     }
   }
 
+  // sets the values of how likely each event is to occur in this possession. 
+  // uses the offensive and defensive players' ratings and tendencies to determine how likely each event is to occur
   void setValues() {
     this.setPgShoots3ptValue();
     this.values.add(this.pgShoots3ptValue);
@@ -135,6 +141,7 @@ public class Possession {
     this.values.add(this.nonShootingFoulValue);
   }
   
+  // randomly determines how long a given event in a possession will last, and updates the statistics accordingly
   void setTimeOfEvent() {
     this.timeOfEvent = r.nextInt(18) + 6;
     if (this.timeLeftInQuarter < this.timeOfEvent) {
@@ -152,7 +159,7 @@ public class Possession {
         this.statsSoFar.awayTeamTimeoutsLeft = 2;
       }
     }
-    this.minTimeInQuarter = this.updateMinLeftInQuarter(this.timeLeftInQuarter);
+    this.minTimeInQuarter = this.timeAsString(this.timeLeftInQuarter);
     this.statsSoFar.addStat(this.offensiveFive.pg, "min", (double) this.timeOfEvent / 60);
     this.statsSoFar.addStat(this.offensiveFive.sg, "min", (double) this.timeOfEvent / 60);
     this.statsSoFar.addStat(this.offensiveFive.sf, "min", (double) this.timeOfEvent / 60);
@@ -165,9 +172,10 @@ public class Possession {
     this.statsSoFar.addStat(this.defensiveFive.c, "min", (double) this.timeOfEvent / 60);
   }
   
-  String updateMinLeftInQuarter(int timeLeftInQuarter) {
-    int minInQuarter = timeLeftInQuarter / 60;
-    int leftoverSeconds = timeLeftInQuarter % 60;
+  // returns a String in the format MINUTES:SECONDS given a number of seconds
+  String timeAsString(int seconds) {
+    int minInQuarter = seconds / 60;
+    int leftoverSeconds = seconds % 60;
     String minTime = minInQuarter + ":";
     if (leftoverSeconds < 10) {
       return minTime + "0" + leftoverSeconds;
@@ -177,6 +185,8 @@ public class Possession {
     }
   }
   
+  // randomly chooses which event will happen (using the values of each event happening) and then 
+  // runs the appropriate method to simulate that event happening
   void chooseEvent() {
     this.totalValue = this.pgPostupValue + this.pgShoots3ptValue + this.pgShootsLayupValue + this.pgShootsMidrangeValue +
         this.sgPostupValue + this.sgShoots3ptValue + this.sgShootsLayupValue + this.sgShootsMidrangeValue +
@@ -187,7 +197,7 @@ public class Possession {
         this.offensiveFoulValue + this.jumpBallValue + this.stealValue;
     double random = r.nextDouble() * totalValue;
     double currentWeight = 0;
-    int counter = 0; // counter goes up to 26 (because there are 27 different values)
+    int counter = 0; // counter goes up to 26 (because there are 27 different values of possible events that could occur)
     for (double value : this.values) {
       currentWeight += value;
       if (currentWeight >= random) {
@@ -305,6 +315,8 @@ public class Possession {
     
   }
 
+  // for each of these methods with the name set___Value, the method uses the offensive and defensive players'
+  // ratings and tendencies to determine how likely that event is to occur
   void setPgShoots3ptValue() {
     this.pgShoots3ptValue = offensiveFive.pg.threePtFrequency * 
         (425 + (((offensiveFive.pg.threePtOpen + offensiveFive.pg.threePtContested) / 2) - 75) * 20);
@@ -484,7 +496,7 @@ public class Possession {
 
 
   // each possible outcome of the possession is represented with a method
-  
+  // these methods with the name of an event simulate that event, adding the resulting statistics to the given GameStats
   void playerShoots3pt(Player offensivePlayer, Player defensivePlayer) {
     this.statsSoFar.addStat(offensivePlayer, "fga", 1);
     this.statsSoFar.addStat(offensivePlayer, "threeptattempted", 1);
@@ -872,6 +884,7 @@ public class Possession {
     }
   }
 
+  // simulates the given player shooting the first of two (or the first or second of three) free throws
   void shootFtNoRebound(Player ftShooter) {
     this.statsSoFar.addStat(ftShooter, "fta", 1);
     int rand1 = r.nextInt(100);
@@ -886,6 +899,7 @@ public class Possession {
     }
   }
   
+  // simulates the given player shooting a free throw and then (if the free throw missed) simulates the rebound that results from the free throw attempt
   void shootLastFt(Player ftShooter) {
     this.statsSoFar.addStat(ftShooter, "fta", 1);
     int rand2 = r.nextInt(100);
@@ -991,6 +1005,8 @@ public class Possession {
     this.endOfPossession = true;
   }
   
+  // different from jumpBall in the Game class (which simulates the jump ball that occurs at the beginning of a game), 
+  // this method simulates a jump ball that occurs when two players are grabbing the ball at the same time
   void jumpBall() {
     Player offensivePlayer;
     Player defensivePlayer;
@@ -1257,6 +1273,7 @@ public class Possession {
     return rebounder;
   }
   
+  // adds the given number of points to the scoring team's point total
   void updateScore(int pts) {
     if (this.homeTeamOnOffense) {
       this.statsSoFar.homeTeamScore = this.statsSoFar.homeTeamScore + pts;
@@ -1266,6 +1283,8 @@ public class Possession {
     }
   }
   
+  // uses probability and players' ratings to determine whether a basket was assisted, 
+  // and if so, determines which player got the assist
   void checkForAssist(Player shooter) {
     ArrayList<Double> values = new ArrayList<>();
     ArrayList<String> assisters = new ArrayList<>();
@@ -1305,6 +1324,8 @@ public class Possession {
     }
   }
   
+  // checks to see whether substitutions should be made (based on the current time of the game)
+  // unsubbable players are either players shooting free throws or two players in a jump ball - by rule they can't be substituted out of a game
   void checkForSubstitutions(Player...unsubbablePlayers) {
     Lineup oldOffensiveFive = this.offensiveFive;
     Lineup oldDefensiveFive = this.defensiveFive;
@@ -1338,6 +1359,7 @@ public class Possession {
     }
   }
   
+  // determines whether a timeout will be called in this possession
   void checkForTimeout() {
     int timeSinceLastTimeout = this.statsSoFar.timeSinceLastTimeout;
     int offensiveTimeoutsLeft = 0;
@@ -1398,10 +1420,12 @@ public class Possession {
         this.statsSoFar.awayTeamTimeoutsLeft--;
       }
       this.statsSoFar.timeSinceLastTimeout = 0;
-      this.statsSoFar.addToPlayByPlay(this.updateMinLeftInQuarter(this.timeLeftInQuarter + this.timeOfEvent) + "   The " + this.offensiveFive.team.name + " called timeout.");
+      this.statsSoFar.addToPlayByPlay(this.timeAsString(this.timeLeftInQuarter + this.timeOfEvent) + "   The " + this.offensiveFive.team.name + " called timeout.");
     }
   }
   
+  // checks to see whether a given player has fouled out of the game. If so, substitutes the player out of the game
+  // and changes the team's rotations for the game so that the player who fouled out cannot be subbed back in.
   void checkForFoulOut(Player p) {
     if (this.statsSoFar.playersStats.get(p).pf >= 6) {
       if (this.homeTeamOnOffense) {

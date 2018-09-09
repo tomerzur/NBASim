@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+// storage class used for inputting all of the ratings and data for the players and teams
 public class PlayerTeamData {
   int numOfTeams;
   ArrayList<Team> listOfTeams;
